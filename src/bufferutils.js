@@ -57,7 +57,7 @@ function readUInt64LE (buffer, offset) {
   var b = buffer.readUInt32LE(offset + 4)
   b *= 0x100000000
 
-  verifuint(b + a, 0x001fffffffffffff)
+  verifuint(b + a, 0xffffffffffffffff)
 
   return b + a
 }

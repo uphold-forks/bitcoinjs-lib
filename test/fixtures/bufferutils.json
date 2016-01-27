@@ -83,22 +83,7 @@
     }
   ],
   "invalid": {
-    "readUInt64LE": [
-      {
-        "description": "n === 2^53",
-        "exception": "value is larger than maximum value for type",
-        "hex64": "0000000000002000",
-        "hexVI": "ff0000000000000020",
-        "dec": 9007199254740992
-      },
-      {
-        "description": "n > 2^53",
-        "exception": "value is larger than maximum value for type",
-        "hex64": "0100000000002000",
-        "hexVI": "ff0100000000000020",
-        "dec": 9007199254740993
-      }
-    ],
+    "readUInt64LE": [],
     "readPushDataInt": [
       {
         "description": "OP_PUSHDATA1, no size",
