@@ -45,6 +45,20 @@ describe('address', function () {
         }, new RegExp(f.script + ' ' + f.exception))
       })
     })
+
+    it('should resolve to the new litecoin scriptHash version', function () {
+      var script = bscript.fromASM('OP_HASH160 b4d410fb65fd4b1f21968671f465839d3494ada4 OP_EQUAL')
+      var address = baddress.fromOutputScript(script, {
+        bip32: { private: 0x019d9cfe, public: 0x019da462 },
+        messagePrefix: '\x19Litecoin Signed Message:\n',
+        pubKeyHash: 48,
+        scriptHash: 50,
+        scriptHashLegacy: 5,
+        wif: 176
+      })
+
+      assert.strictEqual(address, 'MQPHuazwhLLsejFH8uq9qApHF8BvnsbVb9')
+    })
   })
 
   describe('toBase58Check', function () {
@@ -66,6 +80,20 @@ describe('address', function () {
 
         assert.strictEqual(bscript.toASM(script), f.script)
       })
+    })
+
+    it('should resolve litecoin legacy scriptHash addresses', function () {
+      var script = baddress.toOutputScript('3JB9bhaykDVSrDyP32qp1XZsvRbUqxB6Az', {
+        bip32: { private: 0x019d9cfe, public: 0x019da462 },
+        messagePrefix: '\x19Litecoin Signed Message:\n',
+        pubKeyHash: 48,
+        scriptHash: 50,
+        scriptHashLegacy: 5,
+        wif: 176
+      })
+
+      assert.strictEqual(script.toString('hex'), 'a914b4d410fb65fd4b1f21968671f465839d3494ada487')
+      assert.strictEqual(bscript.toASM(script), 'OP_HASH160 b4d410fb65fd4b1f21968671f465839d3494ada4 OP_EQUAL')
     })
 
     fixtures.invalid.toOutputScript.forEach(function (f) {

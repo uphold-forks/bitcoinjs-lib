@@ -41,6 +41,7 @@ function toOutputScript (address, network) {
   var decode = fromBase58Check(address)
   if (decode.version === network.pubKeyHash) return bscript.pubKeyHash.output.encode(decode.hash)
   if (decode.version === network.scriptHash) return bscript.scriptHash.output.encode(decode.hash)
+  if (decode.version === network.scriptHashLegacy) return bscript.scriptHash.output.encode(decode.hash)
 
   throw new Error(address + ' has no matching Script')
 }
