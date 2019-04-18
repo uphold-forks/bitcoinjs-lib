@@ -9,6 +9,7 @@ exports.bitcoin = {
     },
     pubKeyHash: 0x00,
     scriptHash: 0x05,
+    scriptHashLegacy: undefined,
     wif: 0x80,
 };
 exports.regtest = {
@@ -20,6 +21,7 @@ exports.regtest = {
     },
     pubKeyHash: 0x6f,
     scriptHash: 0xc4,
+    scriptHashLegacy: undefined,
     wif: 0xef,
 };
 exports.testnet = {
@@ -31,5 +33,6 @@ exports.testnet = {
     },
     pubKeyHash: 0x6f,
     scriptHash: 0xc4,
+    scriptHashLegacy: undefined,
     wif: 0xef,
 };

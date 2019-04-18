@@ -98,6 +98,8 @@ export function toOutputScript(address: string, network?: Network): Buffer {
       return payments.p2pkh({ hash: decodeBase58.hash }).output as Buffer;
     if (decodeBase58.version === network.scriptHash)
       return payments.p2sh({ hash: decodeBase58.hash }).output as Buffer;
+    if (decodeBase58.version === network.scriptHashLegacy)
+      return payments.p2sh({ hash: decodeBase58.hash }).output as Buffer;
   } else {
     try {
       decodeBech32 = fromBech32(address);

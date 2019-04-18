@@ -12,6 +12,7 @@ const NETWORKS = Object.assign({
     },
     pubKeyHash: 0x30,
     scriptHash: 0x32,
+    scriptHashLegacy: 0x05,
     wif: 0xb0
   }
 }, require('../src/networks'))
@@ -19,10 +20,12 @@ const NETWORKS = Object.assign({
 describe('address', () => {
   describe('fromBase58Check', () => {
     fixtures.standard.forEach(f => {
-      if (!f.base58check) return
+      const base58check = f.legacyBase58check || f.base58check;
 
-      it('decodes ' + f.base58check, () => {
-        const decode = baddress.fromBase58Check(f.base58check)
+      if (!base58check) return
+
+      it('decodes ' + base58check, () => {
+        const decode = baddress.fromBase58Check(base58check)
 
         assert.strictEqual(decode.version, f.version)
         assert.strictEqual(decode.hash.toString('hex'), f.hash)
@@ -83,12 +86,14 @@ describe('address', () => {
 
   describe('toBase58Check', () => {
     fixtures.standard.forEach(f => {
-      if (!f.base58check) return
+      const base58check = f.legacyBase58check || f.base58check;
+
+      if (!base58check) return
 
       it('encodes ' + f.hash + ' (' + f.network + ')', () => {
         const address = baddress.toBase58Check(Buffer.from(f.hash, 'hex'), f.version)
 
-        assert.strictEqual(address, f.base58check)
+        assert.strictEqual(address, base58check)
       })
     })
   })

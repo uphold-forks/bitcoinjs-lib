@@ -78,6 +78,8 @@ function toOutputScript(address, network) {
             return payments.p2pkh({ hash: decodeBase58.hash }).output;
         if (decodeBase58.version === network.scriptHash)
             return payments.p2sh({ hash: decodeBase58.hash }).output;
+        if (decodeBase58.version === network.scriptHashLegacy)
+            return payments.p2sh({ hash: decodeBase58.hash }).output;
     }
     else {
         try {

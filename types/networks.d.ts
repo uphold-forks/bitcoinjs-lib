@@ -4,6 +4,7 @@ export interface Network {
     bip32: Bip32;
     pubKeyHash: number;
     scriptHash: number;
+    scriptHashLegacy: number | undefined;
     wif: number;
 }
 interface Bip32 {

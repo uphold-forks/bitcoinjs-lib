@@ -6,6 +6,7 @@ export interface Network {
   bip32: Bip32;
   pubKeyHash: number;
   scriptHash: number;
+  scriptHashLegacy: number | undefined;
   wif: number;
 }
 
@@ -23,6 +24,7 @@ export const bitcoin: Network = {
   },
   pubKeyHash: 0x00,
   scriptHash: 0x05,
+  scriptHashLegacy: undefined,
   wif: 0x80,
 };
 export const regtest: Network = {
@@ -34,6 +36,7 @@ export const regtest: Network = {
   },
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
+  scriptHashLegacy: undefined,
   wif: 0xef,
 };
 export const testnet: Network = {
@@ -45,5 +48,6 @@ export const testnet: Network = {
   },
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
+  scriptHashLegacy: undefined,
   wif: 0xef,
 };

@@ -29,6 +29,14 @@
       "script": "OP_DUP OP_HASH160 6ac624143d19a3c91d2ac5605f0aebdfeac5b826 OP_EQUALVERIFY OP_CHECKSIG"
     },
     {
+      "network": "litecoin",
+      "version": 5,
+      "hash": "b4d410fb65fd4b1f21968671f465839d3494ada4",
+      "base58check": "MQPHuazwhLLsejFH8uq9qApHF8BvnsbVb9",
+      "legacyBase58check": "3JB9bhaykDVSrDyP32qp1XZsvRbUqxB6Az",
+      "script": "OP_HASH160 b4d410fb65fd4b1f21968671f465839d3494ada4 OP_EQUAL"
+    },
+    {
       "network": "testnet",
       "version": 111,
       "hash": "751e76e8199196d454941c45d1b3a323f1433bd6",
