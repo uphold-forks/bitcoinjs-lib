@@ -1,6 +1,7 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 const createHash = require('create-hash');
+const x11hash = require('@dashevo/x11-hash-js');
 function ripemd160(buffer) {
   try {
     return createHash('rmd160')
@@ -33,3 +34,7 @@ function hash256(buffer) {
   return sha256(sha256(buffer));
 }
 exports.hash256 = hash256;
+function x11(buffer) {
+  return Buffer.from(x11hash.digest(Buffer.from(buffer), 1, 0), 'hex');
+}
+exports.x11 = x11;

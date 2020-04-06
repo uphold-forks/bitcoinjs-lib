@@ -52,6 +52,11 @@ class Transaction {
       offset += n;
       return buffer.slice(offset - n, offset);
     }
+    function readUInt16() {
+      const i = buffer.readUInt16LE(offset);
+      offset += 2;
+      return i;
+    }
     function readUInt32() {
       const i = buffer.readUInt32LE(offset);
       offset += 4;
@@ -82,7 +87,14 @@ class Transaction {
       return vector;
     }
     const tx = new Transaction();
-    tx.version = readInt32();
+    // Dash BC - https://dashcore.readme.io/docs/core-ref-transactions-raw-transaction-format.
+    tx.version = readUInt16();
+    if (tx.version === 3) {
+      tx.type = readUInt16();
+    } else {
+      offset -= 2;
+      tx.version = readInt32();
+    }
     const marker = buffer.readUInt8(offset);
     const flag = buffer.readUInt8(offset + 1);
     let hasWitnesses = false;
@@ -119,6 +131,11 @@ class Transaction {
         throw new Error('Transaction has superfluous witness data');
     }
     tx.locktime = readUInt32();
+    // Dash BC - https://dashcore.readme.io/docs/core-ref-transactions-raw-transaction-format.
+    if (tx.version === 3 && tx.type && tx.type > 0) {
+      tx.payloadSize = readVarInt();
+      tx.payload = readSlice(tx.payloadSize);
+    }
     if (_NO_STRICT) return tx;
     if (offset !== buffer.length)
       throw new Error('Transaction has unexpected data');
@@ -202,6 +219,9 @@ class Transaction {
         ? this.ins.reduce((sum, input) => {
             return sum + vectorSize(input.witness);
           }, 0)
+        : 0) +
+      (this.payload && this.version === 3 && this.type && this.type > 0
+        ? varSliceSize(this.payload)
         : 0)
     );
   }
@@ -224,6 +244,14 @@ class Transaction {
         value: txOut.value,
       };
     });
+    // Dash BC - https://dashcore.readme.io/docs/core-ref-transactions-raw-transaction-format.
+    if (this.version === 3 && this.type) {
+      newTx.type = this.type;
+      if (this.type > 0) {
+        newTx.payload = this.payload;
+        newTx.payloadSize = this.payloadSize;
+      }
+    }
     return newTx;
   }
   /**
@@ -300,6 +328,9 @@ class Transaction {
     function writeSlice(slice) {
       toffset += slice.copy(tbuffer, toffset);
     }
+    function writeUInt16(i) {
+      toffset = tbuffer.writeUInt16LE(i, toffset);
+    }
     function writeUInt32(i) {
       toffset = tbuffer.writeUInt32LE(i, toffset);
     }
@@ -366,7 +397,13 @@ class Transaction {
     tbuffer = Buffer.allocUnsafe(156 + varSliceSize(prevOutScript));
     toffset = 0;
     const input = this.ins[inIndex];
-    writeUInt32(this.version);
+    // Dash BC - https://dashcore.readme.io/docs/core-ref-transactions-raw-transaction-format.
+    if (this.version === 3 && this.type !== undefined) {
+      writeUInt16(this.version);
+      writeUInt16(this.type);
+    } else {
+      writeUInt32(this.version);
+    }
     writeSlice(hashPrevouts);
     writeSlice(hashSequence);
     writeSlice(input.hash);
@@ -376,6 +413,17 @@ class Transaction {
     writeUInt32(input.sequence);
     writeSlice(hashOutputs);
     writeUInt32(this.locktime);
+    // Dash BC - https://dashcore.readme.io/docs/core-ref-transactions-raw-transaction-format.
+    if (
+      this.version === 3 &&
+      this.type &&
+      this.type > 0 &&
+      this.payload &&
+      this.payloadSize
+    ) {
+      writeVarInt(this.payloadSize);
+      writeSlice(this.payload);
+    }
     writeUInt32(hashType);
     return bcrypto.hash256(tbuffer);
   }
@@ -411,6 +459,9 @@ class Transaction {
     function writeUInt8(i) {
       offset = buffer.writeUInt8(i, offset);
     }
+    function writeUInt16(i) {
+      offset = buffer.writeUInt16LE(i, offset);
+    }
     function writeUInt32(i) {
       offset = buffer.writeUInt32LE(i, offset);
     }
@@ -432,7 +483,13 @@ class Transaction {
       writeVarInt(vector.length);
       vector.forEach(writeVarSlice);
     }
-    writeInt32(this.version);
+    // Dash BC - https://dashcore.readme.io/docs/core-ref-transactions-raw-transaction-format.
+    if (this.version === 3 && this.type !== undefined) {
+      writeUInt16(this.version);
+      writeUInt16(this.type);
+    } else {
+      writeInt32(this.version);
+    }
     const hasWitnesses = _ALLOW_WITNESS && this.hasWitnesses();
     if (hasWitnesses) {
       writeUInt8(Transaction.ADVANCED_TRANSACTION_MARKER);
@@ -460,6 +517,11 @@ class Transaction {
       });
     }
     writeUInt32(this.locktime);
+    // Dash BC - https://dashcore.readme.io/docs/core-ref-transactions-raw-transaction-format.
+    if (this.version === 3 && this.type && this.payloadSize && this.payload) {
+      writeVarInt(this.payloadSize);
+      writeSlice(this.payload);
+    }
     // avoid slicing unless necessary
     if (initialOffset !== undefined) return buffer.slice(initialOffset, offset);
     return buffer;

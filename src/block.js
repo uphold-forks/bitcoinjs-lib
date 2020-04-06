@@ -141,7 +141,7 @@ class Block {
     );
   }
   getHash() {
-    return bcrypto.hash256(this.toBuffer(true));
+    return bcrypto.x11(this.toBuffer(true));
   }
   getId() {
     return bufferutils_1.reverseBuffer(this.getHash()).toString('hex');
