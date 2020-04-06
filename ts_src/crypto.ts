@@ -1,4 +1,5 @@
 const createHash = require('create-hash');
+const x11hash = require('@dashevo/x11-hash-js');
 
 export function ripemd160(buffer: Buffer): Buffer {
   try {
@@ -30,4 +31,8 @@ export function hash160(buffer: Buffer): Buffer {
 
 export function hash256(buffer: Buffer): Buffer {
   return sha256(sha256(buffer));
+}
+
+export function x11(buffer: Buffer): Buffer {
+  return Buffer.from(x11hash.digest(Buffer.from(buffer), 1, 0), 'hex');
 }

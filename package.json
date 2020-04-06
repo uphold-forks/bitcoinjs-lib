@@ -49,6 +49,7 @@
     "types"
   ],
   "dependencies": {
+    "@dashevo/x11-hash-js": "^1.0.2",
     "bech32": "^1.1.2",
     "bip174": "^1.0.1",
     "bip32": "^2.0.4",

@@ -165,7 +165,7 @@ export class Block {
   }
 
   getHash(): Buffer {
-    return bcrypto.hash256(this.toBuffer(true));
+    return bcrypto.x11(this.toBuffer(true));
   }
 
   getId(): string {
