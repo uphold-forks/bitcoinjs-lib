@@ -14,6 +14,7 @@ const NETWORKS = Object.assign(
       },
       pubKeyHash: 0x30,
       scriptHash: 0x32,
+      scriptHashLegacy: 0x5,
       wif: 0xb0,
     },
   },
@@ -83,6 +84,17 @@ describe('address', () => {
         }, new RegExp(f.exception));
       });
     });
+
+    it('should resolve to the new litecoin scriptHash version', () => {
+      const script = bscript.fromASM(
+        'OP_HASH160 b4d410fb65fd4b1f21968671f465839d3494ada4 OP_EQUAL',
+      );
+
+      assert.strictEqual(
+        baddress.fromOutputScript(script, NETWORKS.litecoin),
+        'MQPHuazwhLLsejFH8uq9qApHF8BvnsbVb9',
+      );
+    });
   });
 
   describe('toBase58Check', () => {
@@ -97,6 +109,22 @@ describe('address', () => {
 
         assert.strictEqual(address, f.base58check);
       });
+    });
+
+    it('should resolve litecoin legacy scriptHash addresses', function() {
+      var script = baddress.toOutputScript(
+        '3JB9bhaykDVSrDyP32qp1XZsvRbUqxB6Az',
+        NETWORKS.litecoin,
+      );
+
+      assert.strictEqual(
+        script.toString('hex'),
+        'a914b4d410fb65fd4b1f21968671f465839d3494ada487',
+      );
+      assert.strictEqual(
+        bscript.toASM(script),
+        'OP_HASH160 b4d410fb65fd4b1f21968671f465839d3494ada4 OP_EQUAL',
+      );
     });
   });
 
